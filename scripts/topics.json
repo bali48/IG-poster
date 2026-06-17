@@ -1,0 +1,22 @@
+[
+  {"title": "Why NestJS for backend architecture", "angle": "modular structure, dependency injection, and what it buys you over plain Express when an app grows"},
+  {"title": "PostgreSQL vs MongoDB", "angle": "when relational beats document store and vice versa, from a full stack perspective"},
+  {"title": "Docker on Apple Silicon", "angle": "common gotchas running ARM-based dev containers and how to avoid them"},
+  {"title": "TypeScript generics in practice", "angle": "a real pattern that saves time, not the textbook example"},
+  {"title": "AWS services worth knowing", "angle": "the handful of AWS services a full stack engineer actually touches day to day"},
+  {"title": "REST vs GraphQL", "angle": "tradeoffs when designing an API for a multi-client product"},
+  {"title": "React state management", "angle": "when to reach for context, a library, or just lifting state up"},
+  {"title": "Writing testable Node.js code", "angle": "structuring services so unit tests don't fight the framework"},
+  {"title": "CI/CD for a full stack app", "angle": "a simple pipeline that catches real bugs before production"},
+  {"title": "Database indexing basics", "angle": "the one indexing mistake that quietly kills performance"},
+  {"title": "Authentication patterns", "angle": "JWT vs sessions vs OAuth, picked by use case rather than hype"},
+  {"title": "Working across time zones as a remote engineer", "angle": "practical habits for async collaboration with distributed teams"},
+  {"title": "Docker Compose for local dev", "angle": "keeping a multi-service stack easy to spin up for new contributors"},
+  {"title": "Code review habits", "angle": "what actually improves code quality versus nitpicking style"},
+  {"title": "Designing systems that touch money", "angle": "general principles for ledgers, wallets, and pricing logic, no client specifics"},
+  {"title": "Role-based access control", "angle": "a clean way to model permissions without a wall of if-statements"},
+  {"title": "Flutter for cross platform mobile", "angle": "when a single codebase for mobile actually makes sense"},
+  {"title": "API rate limiting", "angle": "protecting a backend without breaking legitimate users"},
+  {"title": "Logging and observability", "angle": "what to log so debugging production doesn't feel like guessing"},
+  {"title": "Freelancing as a developer", "angle": "lessons from consulting across different clients and stacks"}
+]

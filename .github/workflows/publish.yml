@@ -1,0 +1,33 @@
+name: Publish approved IG post
+
+on:
+  workflow_dispatch:
+    inputs:
+      date:
+        description: "Draft date (YYYY-MM-DD)"
+        required: true
+      decision:
+        description: "approve or reject"
+        required: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install composio
+
+      - name: Publish or skip
+        env:
+          COMPOSIO_API_KEY: ${{ secrets.COMPOSIO_API_KEY }}
+          COMPOSIO_USER_ID: ${{ secrets.COMPOSIO_USER_ID }}
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          POST_DATE: ${{ github.event.inputs.date }}
+          DECISION: ${{ github.event.inputs.decision }}
+        run: python scripts/publish_to_instagram.py
