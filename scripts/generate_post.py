@@ -13,7 +13,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
-import anthropic
+from openai import OpenAI
 
 ROOT = Path(__file__).resolve().parent.parent
 POSTS_DIR = ROOT / "posts"
@@ -26,7 +26,7 @@ FONT_REG = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
 
 REQUIRED_ENV = [
     "GITHUB_REPOSITORY", "APPROVAL_SECRET", "WORKER_BASE_URL",
-    "SMTP_USER", "SMTP_PASS", "EMAIL_TO", "ANTHROPIC_API_KEY",
+    "SMTP_USER", "SMTP_PASS", "EMAIL_TO", "OPENAI_API_KEY",
 ]
 
 
@@ -57,7 +57,7 @@ def pick_topic():
 
 
 def generate_content(topic):
-    client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
+    client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
     prompt = f"""Write Instagram content for a full stack software engineer's tech account.
 Topic: {topic['title']}
 Angle: {topic['angle']}
@@ -69,13 +69,12 @@ Return ONLY valid JSON, no markdown, no code fences, with exactly these keys:
 
 Rules: never use an em dash anywhere, use plain hyphens or rewrite the sentence instead. At most 1-2 emoji total, only in the caption, none in headline or image_body. Do not invent specific employer or client names."""
 
-    resp = client.messages.create(
-        model="claude-sonnet-4-6",
-        max_tokens=600,
+    resp = client.chat.completions.create(
+        model="gpt-4.1-nano",
         messages=[{"role": "user", "content": prompt}],
+        response_format={"type": "json_object"},
     )
-    text = "".join(b.text for b in resp.content if b.type == "text").strip()
-    text = text.replace("```json", "").replace("```", "").strip()
+    text = resp.choices[0].message.content.strip()
     return json.loads(text)
 
 

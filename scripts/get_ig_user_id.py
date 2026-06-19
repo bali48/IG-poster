@@ -14,5 +14,6 @@ result = composio.tools.execute(
     "INSTAGRAM_GET_USER_INFO",
     user_id=os.environ["COMPOSIO_USER_ID"],
     arguments={},
+    dangerously_skip_version_check=True,
 )
 print(result)

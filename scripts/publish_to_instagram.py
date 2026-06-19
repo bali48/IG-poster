@@ -38,6 +38,7 @@ def main():
             "image_url": image_url,
             "caption": draft["caption"],
         },
+        dangerously_skip_version_check=True,
     )
     creation_id = container["data"]["id"]
     print(f"Created media container: {creation_id}")
@@ -46,6 +47,7 @@ def main():
         "INSTAGRAM_POST_IG_USER_MEDIA_PUBLISH",
         user_id=user_id,
         arguments={"ig_user_id": ig_user_id, "creation_id": creation_id},
+        dangerously_skip_version_check=True,
     )
     print(f"Published successfully: {published}")
 

@@ -33,8 +33,8 @@ click.
   Verification -> App passwords) for sending the approval emails.
 - A free [Cloudflare](https://dash.cloudflare.com) account for the one small
   Worker.
-- An [Anthropic API key](https://console.anthropic.com) for caption/image
-  text generation.
+- An [OpenAI API key](https://platform.openai.com/api-keys) (with billing
+  enabled) for caption/image text generation.
 
 ## Setup
 
@@ -53,7 +53,7 @@ click.
 
 3. **Add GitHub repo secrets** (Settings -> Secrets and variables ->
    Actions):
-   - `ANTHROPIC_API_KEY`
+   - `OPENAI_API_KEY`
    - `COMPOSIO_API_KEY`
    - `COMPOSIO_USER_ID`
    - `IG_USER_ID`
