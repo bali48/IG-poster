@@ -45,7 +45,7 @@ export default {
           "User-Agent": "ig-auto-poster-worker",
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ ref: "main", inputs: { date, decision } }),
+        body: JSON.stringify({ ref: "master", inputs: { date, decision } }),
       }
     );
 
