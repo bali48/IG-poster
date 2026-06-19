@@ -196,7 +196,7 @@ def main():
 
     git_commit_and_push(date_str)
 
-    image_url = f"https://raw.githubusercontent.com/{repo}/main/posts/{date_str}.jpg"
+    image_url = f"https://raw.githubusercontent.com/{repo}/master/posts/{date_str}.jpg"
     approve_url = f"{worker_base_url}/respond?token={make_token(date_str, 'approve', secret)}"
     reject_url = f"{worker_base_url}/respond?token={make_token(date_str, 'reject', secret)}"
 

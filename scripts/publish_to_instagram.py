@@ -24,7 +24,7 @@ def main():
         return
 
     repo = os.environ["GITHUB_REPOSITORY"]
-    image_url = f"https://raw.githubusercontent.com/{repo}/main/{draft['image_path']}"
+    image_url = f"https://raw.githubusercontent.com/{repo}/master/{draft['image_path']}"
 
     composio = Composio(api_key=os.environ["COMPOSIO_API_KEY"])
     user_id = os.environ["COMPOSIO_USER_ID"]
