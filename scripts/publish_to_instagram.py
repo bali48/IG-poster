@@ -40,7 +40,6 @@ def main():
         },
         dangerously_skip_version_check=True,
     )
-    print("RAW CONTAINER RESPONSE:", json.dumps(container, indent=2))
     creation_id = container["data"]["id"]
     print(f"Created media container: {creation_id}")
 
