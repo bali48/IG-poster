@@ -36,7 +36,8 @@ export default {
     }
 
     const dispatchResp = await fetch(
-      `https://api.github.com/repos/${env.GH_OWNER}/${env.GH_REPO}/actions/workflows/publish.yml/dispatches`,
+      `https://api.github.com/repos/${env.GH_OWNER}/${env.GH_REPO}/actions/workflows/publish1.yml/dispatches`,
+      
       {
         method: "POST",
         headers: {
