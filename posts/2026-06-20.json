@@ -1,7 +1,7 @@
 {
   "date": "2026-06-20",
-  "topic": "AWS services worth knowing",
-  "headline": "Must-Know AWS Services for Developers",
-  "caption": "Hey fellow devs! When working with AWS daily, these are the core services you\u2019ll likely touch: EC2 for servers, S3 for storage, RDS for databases, Lambda for serverless functions, and CloudWatch for monitoring. Mastering these can streamline your development process and improve app reliability. Whether deploying a new feature or debugging an issue, knowing these services inside out makes your life easier. Have you used any of these today? Drop your favorite AWS service in the comments! \ud83d\ude80 #FullStackDeveloper #AWS #CloudComputing #DevLife",
+  "topic": "REST vs GraphQL",
+  "headline": "REST or GraphQL? Which to Choose?",
+  "caption": "Choosing between REST and GraphQL for your multi-client product depends on your needs. REST is straightforward and cache-friendly, ideal for simple data access. GraphQL allows clients to request exactly what they need, reducing over-fetching but requires more setup. Consider your team's expertise, client requirements, and future scalability. Sometimes a hybrid approach works best. Making the right choice will streamline development and improve user experience. \ud83d\udd27\ud83d\udcbb\n\n#APIDesign #FullStack #WebDevelopment #TechTips #SoftwareEngineering",
   "image_path": "posts/2026-06-20.jpg"
 }
