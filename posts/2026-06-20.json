@@ -1,7 +1,7 @@
 {
   "date": "2026-06-20",
-  "topic": "TypeScript generics in practice",
-  "headline": "Reusable Data Handlers with Generics",
-  "caption": "Ever found yourself writing similar code to handle different data types? Generics in TypeScript can make your life easier by allowing you to write reusable, type-safe functions. Instead of multiple versions for each data type, you write one pattern that adapts seamlessly. It\u2019s a simple shift that can save hours in development and audit time. Plus, your code becomes cleaner and easier to maintain. Next time you're dealing with various data structures, think about implementing a generic handler. It\u2019s a real pattern that unlocks efficiency in everyday coding! \u2728\n\n#TypeScript #CodingTips #WebDev #FullStackLife",
+  "topic": "AWS services worth knowing",
+  "headline": "Must-Know AWS Services for Developers",
+  "caption": "Hey fellow devs! When working with AWS daily, these are the core services you\u2019ll likely touch: EC2 for servers, S3 for storage, RDS for databases, Lambda for serverless functions, and CloudWatch for monitoring. Mastering these can streamline your development process and improve app reliability. Whether deploying a new feature or debugging an issue, knowing these services inside out makes your life easier. Have you used any of these today? Drop your favorite AWS service in the comments! \ud83d\ude80 #FullStackDeveloper #AWS #CloudComputing #DevLife",
   "image_path": "posts/2026-06-20.jpg"
 }
