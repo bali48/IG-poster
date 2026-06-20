@@ -1,7 +1,7 @@
 {
   "date": "2026-06-20",
-  "topic": "Docker on Apple Silicon",
-  "headline": "Docker & Apple Silicon Tips",
-  "caption": "If you're developing on an M1 or M2 Mac, you might run into common frustrations with Docker containers not running as expected. Make sure to specify the correct platform during image pulls or builds using --platform=linux/amd64 or linux/arm64. Also, choose container images that support Apple Silicon natively or are multi-architecture. This small setup tweak can save you hours of troubleshooting and ensure smooth development workflows. Happy containerizing! \ud83d\ude80 \n\n#DockerTips #AppleSilicon #DevLife #FullStackEngineer #ContainerHacks",
+  "topic": "TypeScript generics in practice",
+  "headline": "Reusable Data Handlers with Generics",
+  "caption": "Ever found yourself writing similar code to handle different data types? Generics in TypeScript can make your life easier by allowing you to write reusable, type-safe functions. Instead of multiple versions for each data type, you write one pattern that adapts seamlessly. It\u2019s a simple shift that can save hours in development and audit time. Plus, your code becomes cleaner and easier to maintain. Next time you're dealing with various data structures, think about implementing a generic handler. It\u2019s a real pattern that unlocks efficiency in everyday coding! \u2728\n\n#TypeScript #CodingTips #WebDev #FullStackLife",
   "image_path": "posts/2026-06-20.jpg"
 }
