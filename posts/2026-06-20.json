@@ -1,0 +1,7 @@
+{
+  "date": "2026-06-20",
+  "topic": "PostgreSQL vs MongoDB",
+  "headline": "PostgreSQL vs MongoDB: When to choose",
+  "caption": "As a full stack engineer, choosing between PostgreSQL and MongoDB depends on your project needs. Use PostgreSQL when data integrity, complex joins, and strict schemas matter most. Opt for MongoDB when you need quick iteration, semi-structured data, or scalability. Understanding their strengths helps you build resilient, efficient apps. Knowing when to deploy each can save you time and headaches down the line. \ud83d\ude80 Whether working on a financial app or a real-time dashboard, matching the database to your use case is key. Happy coding! \n\n#FullStack #DatabaseDesign #TechTips #SoftwareEngineering",
+  "image_path": "posts/2026-06-20.jpg"
+}
