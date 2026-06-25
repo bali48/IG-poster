@@ -1,3 +1,4 @@
 openai>=1.50.0
 pillow>=10.0.0
 composio>=0.15.0
+requests>=2.31.0

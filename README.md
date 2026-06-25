@@ -91,19 +91,78 @@ click.
    right, and clicking "Approve & post" actually publishes. Then leave the
    cron schedule to run on its own.
 
+## How today's topic gets picked
+
+Each day, the script checks three sources in order and uses the first one
+that has something:
+
+1. **Manual queue** (optional) - a Google Sheet you publish to the web as
+   CSV. If you've added a row there that hasn't been posted yet, it wins,
+   no matter what.
+2. **Live trend check** - tries Hacker News, then dev.to, for a recent,
+   well-received AI/tech story (filtered to a minimum points threshold so
+   noise doesn't get through). If found, the model is explicitly asked for
+   *your own engineering take* on it, not a summary or reproduction of the
+   article, both to stay original and to avoid the account turning into a
+   generic AI-news repost feed.
+3. **Evergreen rotation** - the 60-topic shuffle-bag from `topics.json`,
+   used whenever the above two come up empty (network hiccup, nothing
+   relevant trending, no manual queue configured). This is what keeps the
+   bot from ever going silent.
+
+Every draft's `posts/{date}.json` now also records a `topic_source` field
+(`manual`, `trend`, or `evergreen`) so you can see which path was used on
+any given day.
+
+### Setting up the manual queue (optional)
+
+1. Create a Google Sheet with two columns: `topic` and `angle` (angle is
+   optional, leave it blank if you just want the model to riff on the
+   title freely).
+2. File -> Share -> Publish to web -> select CSV format -> Publish.
+3. Copy the URL it gives you (looks like
+   `https://docs.google.com/spreadsheets/d/e/.../pub?output=csv`).
+4. Add it as a GitHub repo secret named `TOPICS_SHEET_CSV_URL`.
+
+That's it, no API key, no service account. Just add rows whenever you think
+of something specific you want posted, the bot remembers what it's already
+used (by title, tracked in `scripts/state.json`) and works through new rows
+in order, oldest first. If you skip this entirely, the bot just runs on
+trend-check + evergreen with no manual input at all.
+
 ## Customizing
 
 - **Topics:** edit `scripts/topics.json`. It currently cycles through 20
   generic stack-level topics (NestJS, Postgres vs Mongo, Docker, AWS, React,
   auth patterns, etc.) and deliberately avoids naming any client or employer.
   Add, remove, or reorder entries freely - rotation just walks through the
-  list in order via `scripts/state.json`.
+  list in order via `scripts/state.json`. Each topic also has an `icon`
+  field (`server`, `database`, `container`, `code`, `cloud`, `network`,
+  `pipeline`, `lock`, `globe`, `money`, `mobile`, `chart`, `briefcase`,
+  `ai`) that controls the faint background graphic on the image card, see
+  below. Manual/trend-sourced topics don't have a preset icon, the model
+  picks one from this same list automatically.
+- **Background icon:** every card gets a large, low-opacity themed graphic
+  (a server rack for backend topics, a cloud for AWS, a padlock for auth,
+  etc.) drawn behind the text. The drawing functions live in
+  `scripts/generate_post.py` under `ICON_DRAWERS`. To add a new one, write a
+  small function that draws with basic shapes (`d.line`, `d.ellipse`,
+  `d.rounded_rectangle`, ...) at the given `(cx, cy)` and size `s`, add it to
+  `ICON_DRAWERS`, then reference its name in `topics.json`.
 - **Posting time:** change the cron line in
   `.github/workflows/generate_draft.yml` (currently `0 9 * * *`, 9:00 UTC).
 - **Image style:** colors, fonts, and layout are all in `make_image()`
   inside `scripts/generate_post.py`.
 - **Caption voice:** tweak the prompt in `generate_content()` in the same
-  file.
+  file. Em dashes and en dashes are also stripped out automatically after
+  generation (`clean_text()`), as a backup in case the model ignores the
+  prompt instruction.
+- **Footer links:** the three rows at the bottom of each card (Instagram,
+  website, GitHub) are set in `make_image()`'s call to `draw_footer()` in
+  `scripts/generate_post.py`. Edit the handles/labels there directly. The
+  small icons next to each are drawn generically (a simple camera shape, a
+  globe, a branch/fork glyph) rather than copying the actual Instagram or
+  GitHub logos, to stay clear of trademark issues.
 
 ## Notes
 

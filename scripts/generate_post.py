@@ -1,6 +1,9 @@
 import os
 import json
 import re
+import random
+import csv
+import io
 import hashlib
 import hmac
 import base64
@@ -8,6 +11,8 @@ import time
 import smtplib
 import subprocess
 import sys
+
+import requests
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from datetime import datetime, timezone
@@ -41,20 +46,128 @@ def require_env():
 def load_state():
     if STATE_PATH.exists():
         return json.loads(STATE_PATH.read_text())
-    return {"last_index": -1}
+    return {
+        "deck": [],
+        "last_topic_title": None,
+        "used_manual_topics": [],
+        "used_trend_titles": [],
+    }
 
 
 def save_state(state):
     STATE_PATH.write_text(json.dumps(state, indent=2))
 
 
-def pick_topic():
-    topics = json.loads(TOPICS_PATH.read_text())
-    state = load_state()
-    idx = (state["last_index"] + 1) % len(topics)
-    state["last_index"] = idx
-    save_state(state)
+def pick_evergreen_topic(topics, state):
+    deck = state.get("deck") or []
+
+    if not deck:
+        deck = list(range(len(topics)))
+        random.shuffle(deck)
+        last_title = state.get("last_topic_title")
+        if last_title is not None and len(deck) > 1 and topics[deck[0]]["title"] == last_title:
+            deck[0], deck[1] = deck[1], deck[0]
+
+    idx = deck.pop(0)
+    state["deck"] = deck
+    state["last_topic_title"] = topics[idx]["title"]
     return topics[idx]
+
+
+def fetch_manual_topic(state):
+    """Reads a Google Sheet published to the web as CSV (zero auth needed).
+    Expected columns: 'topic' (required), 'angle' (optional). Returns the
+    first row not already posted, or None if no sheet is configured, the
+    fetch fails, or nothing new is queued."""
+    sheet_url = os.environ.get("TOPICS_SHEET_CSV_URL")
+    if not sheet_url:
+        return None
+    try:
+        resp = requests.get(sheet_url, timeout=15)
+        resp.raise_for_status()
+        used = set(state.get("used_manual_topics", []))
+        reader = csv.DictReader(io.StringIO(resp.text))
+        for row in reader:
+            title = (row.get("topic") or "").strip()
+            if not title or title in used:
+                continue
+            angle = (row.get("angle") or "").strip() or "share your own engineering take on this"
+            return {"title": title, "angle": angle, "icon": None}
+    except Exception as e:
+        print(f"Manual topics sheet check failed, skipping it for today: {e}")
+    return None
+
+
+def fetch_trending_topic(state):
+    """Tries Hacker News, then dev.to, for a recent well-received AI/tech
+    story. Used only as a seed for the model's own commentary, never to
+    summarize or reproduce the source article."""
+    used = set(state.get("used_trend_titles", []))
+
+    try:
+        resp = requests.get(
+            "https://hn.algolia.com/api/v1/search_by_date",
+            params={"query": "AI", "tags": "story", "numericFilters": "points>40"},
+            timeout=15,
+        )
+        resp.raise_for_status()
+        for hit in resp.json().get("hits", []):
+            title = (hit.get("title") or "").strip()
+            if title and title not in used:
+                return {
+                    "title": title,
+                    "angle": (
+                        f"a trending story today on Hacker News titled '{title}'. "
+                        "Give your own engineer's perspective, do not just summarize the news"
+                    ),
+                    "icon": None,
+                }
+    except Exception as e:
+        print(f"Hacker News trend check failed: {e}")
+
+    try:
+        resp = requests.get(
+            "https://dev.to/api/articles",
+            params={"tag": "ai", "top": "2"},
+            timeout=15,
+        )
+        resp.raise_for_status()
+        for article in resp.json():
+            title = (article.get("title") or "").strip()
+            if title and title not in used:
+                return {
+                    "title": title,
+                    "angle": (
+                        f"a trending dev.to article titled '{title}'. "
+                        "Give your own engineer's perspective, do not just summarize the article"
+                    ),
+                    "icon": None,
+                }
+    except Exception as e:
+        print(f"dev.to trend check failed: {e}")
+
+    return None
+
+
+def select_topic(topics, state):
+    """Priority order: manual queue > live AI/tech trend > evergreen rotation."""
+    manual = fetch_manual_topic(state)
+    if manual:
+        state.setdefault("used_manual_topics", []).append(manual["title"])
+        print(f"Using manual topic: {manual['title']}")
+        return manual, "manual"
+
+    trend = fetch_trending_topic(state)
+    if trend:
+        used = state.setdefault("used_trend_titles", [])
+        used.append(trend["title"])
+        state["used_trend_titles"] = used[-200:]
+        print(f"Using trending topic: {trend['title']}")
+        return trend, "trend"
+
+    evergreen = pick_evergreen_topic(topics, state)
+    print(f"Using evergreen topic: {evergreen['title']}")
+    return evergreen, "evergreen"
 
 
 def clean_text(text):
@@ -65,6 +178,11 @@ def clean_text(text):
 
 def generate_content(topic):
     client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
+    needs_icon = topic.get("icon") is None
+    icon_line = ""
+    if needs_icon:
+        icon_line = f'- "icon": pick the single best match from this exact list: {list(ICON_DRAWERS.keys())}\n'
+
     prompt = f"""Write Instagram content for a full stack software engineer's tech account.
 Topic: {topic['title']}
 Angle: {topic['angle']}
@@ -73,7 +191,7 @@ Return ONLY valid JSON, no markdown, no code fences, with exactly these keys:
 - "headline": a short punchy title for an image card, max 6 words
 - "image_body": 1-2 sentences, max 28 words total, the core insight, plain text
 - "caption": a full Instagram caption, 60-120 words, friendly and specific (not generic motivational fluff), end with 3-5 relevant hashtags on their own line
-
+{icon_line}
 Rules: never use an em dash anywhere, use plain hyphens or rewrite the sentence instead. At most 1-2 emoji total, only in the caption, none in headline or image_body. Do not invent specific employer or client names."""
 
     resp = client.chat.completions.create(
@@ -83,7 +201,12 @@ Rules: never use an em dash anywhere, use plain hyphens or rewrite the sentence 
     )
     text = resp.choices[0].message.content.strip()
     data = json.loads(text)
-    return {k: clean_text(v) for k, v in data.items()}
+    cleaned = {k: (clean_text(v) if isinstance(v, str) else v) for k, v in data.items()}
+
+    if needs_icon and cleaned.get("icon") not in ICON_DRAWERS:
+        cleaned["icon"] = "ai"
+
+    return cleaned
 
 
 def wrap_text(draw, text, font, max_width):
@@ -229,6 +352,22 @@ def _icon_briefcase(d, cx, cy, s, c):
                          radius=8, outline=c, width=8)
 
 
+def _icon_ai(d, cx, cy, s, c):
+    w = s * 0.5
+    half = w / 2
+    d.rectangle([cx - half, cy - half, cx + half, cy + half], outline=c, width=8)
+    pin_len = s * 0.12
+    for frac in (-0.3, 0, 0.3):
+        y = cy + frac * w
+        d.line([cx - half - pin_len, y, cx - half, y], fill=c, width=6)
+        d.line([cx + half, y, cx + half + pin_len, y], fill=c, width=6)
+    for frac in (-0.3, 0, 0.3):
+        x = cx + frac * w
+        d.line([x, cy - half - pin_len, x, cy - half], fill=c, width=6)
+        d.line([x, cy + half, x, cy + half + pin_len], fill=c, width=6)
+    d.ellipse([cx - 10, cy - 10, cx + 10, cy + 10], fill=c)
+
+
 ICON_DRAWERS = {
     "server": _icon_server,
     "database": _icon_database,
@@ -243,6 +382,7 @@ ICON_DRAWERS = {
     "mobile": _icon_mobile,
     "chart": _icon_chart,
     "briefcase": _icon_briefcase,
+    "ai": _icon_ai,
 }
 
 
@@ -260,6 +400,43 @@ def draw_topic_icon(base_img, icon_name, accent_rgb):
 
 
 
+def _glyph_camera(d, cx, cy, s, c):
+    r = s / 2
+    d.rounded_rectangle([cx - r, cy - r * 0.72, cx + r, cy + r * 0.72], radius=6, outline=c, width=4)
+    d.ellipse([cx - r * 0.42, cy - r * 0.42, cx + r * 0.42, cy + r * 0.42], outline=c, width=4)
+    d.ellipse([cx + r * 0.38, cy - r * 0.62, cx + r * 0.6, cy - r * 0.42], fill=c)
+
+
+def _glyph_link(d, cx, cy, s, c):
+    r = s / 2
+    d.ellipse([cx - r, cy - r, cx + r, cy + r], outline=c, width=4)
+    d.ellipse([cx - r * 0.38, cy - r, cx + r * 0.38, cy + r], outline=c, width=3)
+    d.line([cx - r, cy, cx + r, cy], fill=c, width=3)
+
+
+def _glyph_git(d, cx, cy, s, c):
+    r = s / 2
+    top = (cx - r * 0.55, cy - r * 0.7)
+    bot = (cx - r * 0.55, cy + r * 0.7)
+    mid = (cx + r * 0.45, cy)
+    for p in (top, bot, mid):
+        d.ellipse([p[0] - 6, p[1] - 6, p[0] + 6, p[1] + 6], outline=c, width=3)
+    d.line([top[0], top[1] + 6, bot[0], bot[1] - 6], fill=c, width=3)
+    d.line([top[0] + 6, top[1] + 3, mid[0] - 6, mid[1] - 3], fill=c, width=3)
+
+
+def draw_footer(draw, img_w, img_h, accent, links):
+    """links: list of (glyph_fn, label) drawn bottom-up in the order given."""
+    font = ImageFont.truetype(FONT_REG, 30)
+    row_h = 46
+    n = len(links)
+    start_y = img_h - 30 - n * row_h
+    for i, (glyph_fn, label) in enumerate(links):
+        cy = start_y + i * row_h + row_h / 2
+        glyph_fn(draw, 80 + 14, cy, 26, accent)
+        draw.text((80 + 36, cy), label, font=font, fill=(148, 163, 184), anchor="lm")
+
+
 def make_image(headline, body, icon_name, out_path):
     W, H = 1080, 1080
     bg = (15, 23, 42)
@@ -273,7 +450,6 @@ def make_image(headline, body, icon_name, out_path):
     label_font = ImageFont.truetype(FONT_BOLD, 36)
     headline_font = ImageFont.truetype(FONT_BOLD, 64)
     body_font = ImageFont.truetype(FONT_REG, 40)
-    footer_font = ImageFont.truetype(FONT_REG, 28)
 
     draw.rectangle([(0, 0), (14, H)], fill=accent)
     draw.text((80, 90), "TECH TIP", font=label_font, fill=accent)
@@ -288,7 +464,14 @@ def make_image(headline, body, icon_name, out_path):
         draw.text((80, y), line, font=body_font, fill=(203, 213, 225))
         y += 54
 
-    draw.text((80, H - 90), "@bilal_balimalik   bilalawan.dev", font=footer_font, fill=(100, 116, 139))
+    draw_footer(
+        draw, W, H, accent,
+        links=[
+            (_glyph_camera, "@bilal_dev1"),
+            (_glyph_link, "bilalawan.dev"),
+            (_glyph_git, "@bali48"),
+        ],
+    )
     img.save(out_path, "JPEG", quality=92)
 
 
@@ -346,15 +529,22 @@ def main():
     worker_base_url = os.environ["WORKER_BASE_URL"].rstrip("/")
 
     date_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-    topic = pick_topic()
+
+    topics = json.loads(TOPICS_PATH.read_text())
+    state = load_state()
+    topic, source = select_topic(topics, state)
+    save_state(state)
+
     content = generate_content(topic)
+    icon_name = topic.get("icon") or content.get("icon") or "ai"
 
     image_path = POSTS_DIR / f"{date_str}.jpg"
-    make_image(content["headline"], content["image_body"], topic["icon"], image_path)
+    make_image(content["headline"], content["image_body"], icon_name, image_path)
 
     draft = {
         "date": date_str,
         "topic": topic["title"],
+        "topic_source": source,
         "headline": content["headline"],
         "caption": content["caption"],
         "image_path": f"posts/{date_str}.jpg",
