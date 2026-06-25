@@ -4,8 +4,8 @@ compatibility_date = "2026-01-01"
 
 # Not secret, fine to commit - edit to your own GitHub username/repo
 [vars]
-GH_OWNER = "bali48"
-GH_REPO = "IG-poster"
+GH_OWNER = "your-github-username"
+GH_REPO = "ig-auto-poster"
 
 # Set these with `wrangler secret put <NAME>` - do NOT put them here:
 #   APPROVAL_SECRET  (same value as the GitHub repo secret APPROVAL_SECRET)

@@ -1,7 +1,0 @@
-{
-  "date": "2026-06-19",
-  "topic": "Why NestJS for backend architecture",
-  "headline": "Why Choose NestJS?",
-  "caption": "Building a backend that can grow with your project is tough with plain Express \u2014 it quickly turns into spaghetti code. NestJS brings a structured, modular approach with built-in dependency injection, making it easier to organize, test, and scale your codebase. It\u2019s like having a blueprint for your app that adapts as features expand. If you\u2019re looking to level up your backend architecture, NestJS is a game changer. \ud83d\ude80 Have you made the switch yet? Drop your thoughts below!\n\n#FullStackDevelopment #NestJS #BackendArchitecture #CodeSmart",
-  "image_path": "posts/2026-06-19.jpg"
-}

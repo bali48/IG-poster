@@ -1,7 +1,0 @@
-{
-  "date": "2026-06-20",
-  "topic": "REST vs GraphQL",
-  "headline": "REST or GraphQL? Which to Choose?",
-  "caption": "Choosing between REST and GraphQL for your multi-client product depends on your needs. REST is straightforward and cache-friendly, ideal for simple data access. GraphQL allows clients to request exactly what they need, reducing over-fetching but requires more setup. Consider your team's expertise, client requirements, and future scalability. Sometimes a hybrid approach works best. Making the right choice will streamline development and improve user experience. \ud83d\udd27\ud83d\udcbb\n\n#APIDesign #FullStack #WebDevelopment #TechTips #SoftwareEngineering",
-  "image_path": "posts/2026-06-20.jpg"
-}
