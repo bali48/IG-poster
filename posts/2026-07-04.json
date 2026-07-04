@@ -1,0 +1,8 @@
+{
+  "date": "2026-07-04",
+  "topic": "The bottleneck might be the air in the room",
+  "topic_source": "trend",
+  "headline": "Is the Air the Real Bottleneck?",
+  "caption": "As engineers, we often focus on code and hardware upgrades to boost speed. But today\u2019s Hacker News story highlights an often overlooked factor - the air quality in the room can significantly impact our hardware performance and cooling. If your servers or workstations are overheating or throttling, check the room ventilation and air circulation first. Small environment tweaks can lead to big efficiency gains without costly upgrades. Always remember that successful optimization includes both software and **your environment**. Stay curious and keep troubleshooting! \ud83d\udd27\ud83d\udca1\n\n#FullStackEngineer #PerformanceTuning #DevTips",
+  "image_path": "posts/2026-07-04.jpg"
+}
