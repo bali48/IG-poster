@@ -1,0 +1,8 @@
+{
+  "date": "2026-07-27",
+  "topic": "How is the Bun Rewrite in Rust going?",
+  "topic_source": "trend",
+  "headline": "Bun Rewrite in Rust Progress",
+  "caption": "As a full stack engineer, I've been watching the Bun Rewrite in Rust closely. The potential for faster startup times and better memory management is exciting. However, transitioning an entire runtime involves handling compatibility issues and API stability. It's fascinating to see the community's rapid progress and candid discussions around these challenges. I believe if they can navigate these hurdles, Bun could become a serious contender in the JS runtime world. \ud83d\ude80 Curious to see how their Rust rewrite evolves in the coming months! \n\n#Rust #BunJS #WebDevelopment",
+  "image_path": "posts/2026-07-27.jpg"
+}
