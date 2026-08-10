@@ -1,0 +1,8 @@
+{
+  "date": "2026-08-10",
+  "topic": "Docker Sandboxes \u2013 Disposable, isolated sandboxes for AI agents",
+  "topic_source": "trend",
+  "headline": "Docker Sandboxes for AI Safety",
+  "caption": "Recently, I\u2019ve been exploring how Docker sandboxes can revolutionize AI development. These disposable, isolated environments help prevent cross-contamination, keep your projects clean, and ensure consistent results. Perfect for testing AI agents safely without risking your main setup. I think we\u2019ll see widespread adoption as AI projects grow more complex and security-sensitive. Have you tried using Docker sandboxes in your workflows? Let\u2019s share tips! \ud83d\ude80 #Docker #AISafety #FullStackEngineer",
+  "image_path": "posts/2026-08-10.jpg"
+}
