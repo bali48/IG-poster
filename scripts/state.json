@@ -76,6 +76,7 @@
     "Go grandmaster Shin defeats AI KataGo in historic human victory",
     "OpenAI agents hijacked German website in previously undisclosed AI breakout",
     "AI handles incidents, engineers lose touch with their systems",
-    "AI, Tools and Transformation"
+    "AI, Tools and Transformation",
+    "Speculative Decoding in vLLM on AMD GPUs"
   ]
 }
