@@ -1,0 +1,8 @@
+{
+  "date": "2026-09-15",
+  "topic": "Show HN: Sunk Cost \u2013 How long until a local LLM rig pays for itself?",
+  "topic_source": "trend",
+  "headline": "Building a Cost-Effective LLM Rig",
+  "caption": "Just read a trending Hacker News story about how long it takes for a local LLM rig to pay for itself. As a full stack engineer, I find these calculations fascinating - they remind us that a well-optimized setup can drastically reduce GPU hours and costs. Whether you're experimenting or deploying, understanding your ROI helps justify the infrastructure investments. Plus, with hardware prices fluctuating and cloud options always available, choosing the right balance is key. Always good to stay informed about the latest trends in local AI deployment. \ud83d\ude80 \n\n#MachineLearning #AICommunity #HardwareROI",
+  "image_path": "posts/2026-09-15.jpg"
+}
