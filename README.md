@@ -1,5 +1,12 @@
 # Daily Instagram auto-poster (with email approval)
 
+> **Retired (September 2026).** This project is no longer in use. Both
+> GitHub Actions workflows are disabled, so no drafts are generated and
+> nothing is posted. The code is kept here for reference. To revive it, run
+> `gh workflow enable generate_draft.yml && gh workflow enable publish1.yml`
+> and set `GH_OWNER`/`GH_REPO` in `worker/wrangler.toml` before redeploying
+> the Worker.
+
 Every day a GitHub Action drafts a tech post about your stack (caption + a
 branded image card), commits it to this repo, and emails you a preview with
 "Approve & post" / "Skip today" buttons. Clicking a button hits a tiny
